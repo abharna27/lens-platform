@@ -27,7 +27,7 @@ Docker, GitHub Actions, Terraform, Prometheus + Grafana.
 
 ## Roadmap
 
-- [ ] Phase 0: Repo, Docker Compose, CI
+- [D] Phase 0: Repo, Docker Compose, CI
 - [ ] Phase 1: Data layer and historical API
 - [ ] Phase 2: Dashboard frontend
 - [ ] Phase 3: Real-time pipeline
