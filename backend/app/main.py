@@ -1,11 +1,4 @@
 from fastapi import FastAPI
-
-app = FastAPI(title="Lens API")
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
-from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Lens API")
