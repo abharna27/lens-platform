@@ -1,11 +1,12 @@
-from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer
+
 from app.core.db import Base
 
 
 class MarketBar(Base):
     __tablename__ = "market_bars"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     entity_id = Column(Integer, ForeignKey("entities.id"), nullable=False, index=True)
     ts = Column(DateTime(timezone=True), primary_key=True, nullable=False, index=True)
     open = Column(Float, nullable=False)

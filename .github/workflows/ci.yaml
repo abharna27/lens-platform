@@ -11,6 +11,20 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg16
+        env:
+          POSTGRES_USER: lens
+          POSTGRES_PASSWORD: change_me
+          POSTGRES_DB: lens
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,7 +34,14 @@ jobs:
           cache-dependency-path: backend/requirements.txt
       - run: pip install -r requirements.txt
       - run: ruff check .
-      - run: python -m pytest
+      - name: Run migrations
+        env:
+          DATABASE_URL: postgresql://lens:change_me@localhost:5432/lens
+        run: alembic upgrade head
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://lens:change_me@localhost:5432/lens
+        run: python -m pytest
 
   web:
     runs-on: ubuntu-latest
