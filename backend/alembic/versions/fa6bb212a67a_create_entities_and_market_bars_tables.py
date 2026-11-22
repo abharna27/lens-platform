@@ -5,17 +5,17 @@ Revises:
 Create Date: 2026-11-10 16:10:35.926220
 
 """
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = 'fa6bb212a67a'
-down_revision: Union[str, Sequence[str], None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -30,7 +30,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_entities_symbol'), 'entities', ['symbol'], unique=True)
     op.create_table('market_bars',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('entity_id', sa.Integer(), nullable=False),
     sa.Column('ts', sa.DateTime(timezone=True), nullable=False),
     sa.Column('open', sa.Float(), nullable=False),
@@ -43,6 +43,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_market_bars_entity_id'), 'market_bars', ['entity_id'], unique=False)
     op.create_index(op.f('ix_market_bars_ts'), 'market_bars', ['ts'], unique=False)
+    op.execute("SELECT create_hypertable('market_bars', 'ts', if_not_exists => TRUE);")
     # ### end Alembic commands ###
 
 

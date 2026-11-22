@@ -1,7 +1,6 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
@@ -10,13 +9,12 @@ from alembic import context
 config = context.config
 import os
 import sys
+
 sys.path.append(os.getcwd())
 
 from app.core.db import Base
-from app.core.models import Entity          # noqa
+from app.core.models import Entity  # noqa
 from app.packs.markets.models import MarketBar  # noqa
-
-
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -26,7 +24,13 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
+
+database_url = os.environ.get("DATABASE_URL", "")
+# Auto-swap host 'db' to 'localhost' when running Alembic directly on the host machine
+if "@db:" in database_url:
+    database_url = database_url.replace("@db:", "@localhost:")
+
+config.set_main_option("sqlalchemy.url", database_url)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
