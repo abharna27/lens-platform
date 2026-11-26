@@ -1,39 +1,25 @@
-   import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getEntities } from "./lib/api";
 
-   type HealthResponse = {
-     status: string;
-   };
+function App() {
+  const { data: entities, isLoading, error } = useQuery({
+    queryKey: ["entities"],
+    queryFn: getEntities,
+  });
 
-   function App() {
-     const [health, setHealth] = useState<HealthResponse | null>(null);
-     const [loading, setLoading] = useState(true);
-     const [error, setError] = useState<string | null>(null);
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {(error as Error).message}</p>;
 
-     useEffect(() => {
-       fetch("http://localhost:8000/health")
-         .then((res) => {
-           if (!res.ok) throw new Error(`Server replied with ${res.status}`);
-           return res.json();
-         })
-         .then((data: HealthResponse) => {
-           setHealth(data);
-           setLoading(false);
-         })
-         .catch((err) => {
-           setError(err.message);
-           setLoading(false);
-         });
-     }, []);
+  return (
+    <div>
+      <h1>Lens</h1>
+      <ul>
+        {entities?.map((e) => (
+          <li key={e.id}>{e.symbol} — {e.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
-     if (loading) return <p>Loading...</p>;
-     if (error) return <p>Error: {error}</p>;
-
-     return (
-       <div>
-         <h1>Lens</h1>
-         <p>Backend status: {health?.status}</p>
-       </div>
-     );
-   }
-
-   export default App;
+export default App;
