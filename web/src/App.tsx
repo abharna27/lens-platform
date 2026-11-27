@@ -19,7 +19,11 @@ function App() {
         <Watchlist selectedSymbol={selectedSymbol} onSelect={setSelectedSymbol} />
       </aside>
       <main style={{ flex: 1, padding: "1.5rem 2rem" }}>
-        <PriceChart symbol={selectedSymbol} />
+        {selectedSymbol ? (
+          <PriceChart symbol={selectedSymbol} />
+        ) : (
+          <p>Pick a symbol</p>
+        )}
       </main>
     </div>
   );
