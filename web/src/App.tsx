@@ -1,25 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { getEntities } from "./lib/api";
+import { useState } from "react";
+import { Watchlist } from "./components/watchlist";
 
 function App() {
-  const { data: entities, isLoading, error } = useQuery({
-    queryKey: ["entities"],
-    queryFn: getEntities,
-  });
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {(error as Error).message}</p>;
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
   return (
-    <div>
-      <h1>Lens</h1>
-      <ul>
-        {entities?.map((e) => (
-          <li key={e.id}>{e.symbol} — {e.name}</li>
-        ))}
-      </ul>
+    <div style={{ display: "flex" }}>
+      <Watchlist selectedSymbol={selectedSymbol} onSelect={setSelectedSymbol} />
+      <div>
+        {selectedSymbol ? `Selected: ${selectedSymbol}` : "Pick a symbol"}
+      </div>
     </div>
   );
 }
 
-export default App;
+export default App; 
